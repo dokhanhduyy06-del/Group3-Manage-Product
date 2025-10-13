@@ -85,5 +85,15 @@ int count = 0, capacity = 0;
 int choice, sortCriteria;
 char searQuery[50];
 
-while (1) 
+while (1) { 
+     printf("1. Add product\n2. Search product\n3. Sort product\n4. Exit\n")
+         printf("Choose an option: ");
+    scanf("%d", choice);
+    clearInputBufffer();
+
+    switch (choice) { 
+case 1:
+       addProduct(&productlist, &count, &capacity);
+       break;
+
 
