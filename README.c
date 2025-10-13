@@ -95,5 +95,28 @@ while (1) {
 case 1:
        addProduct(&productlist, &count, &capacity);
        break;
+case 2:
+       printf("Enter name or ID to search: ");
+       fgets(searchQuery, 50, stdin);
+       searchQuery[strcspn(searchQuery, "\n")] = 0;
+       searchProduct(productlist, count, searchQuery);
+       break;
+case 3:
+       printf("Sort by: \n1. Name\n2. Quality\n3. Price\n");
+       printf("Choose a criteria: ");
+       scanf("%d", &sortCriteria);
+       sortProducts(productlist, count, sortCriteria);
+       printf("Products sorted successfully.\n");
+       break; 
+case 4:
+      free(productlist);
+      return 0;
+default;
+      printf("Invalid option! Please try again. \n ");
+      break;
+    }
+}
+}
+
 
 
