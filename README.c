@@ -7,7 +7,7 @@ typedef struct{
     char name[50];
     int quantity;
     char stockname[50];
-    long long price;
+    float price;
 }Product;
 //clear input buffer function to avoid infinite loop
 void clearInputBuffer(){
