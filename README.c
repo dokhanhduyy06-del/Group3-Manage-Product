@@ -1,6 +1,7 @@
 #include<stdio.h>
 #include<string.h>
 #include<math.h>
+#include<stdlib.h>
 typedef struct{
     char id[20];
     char name[50];
@@ -79,3 +80,10 @@ void EditProduct(Product *productlist,int count){
 
 
 }
+Product * productlist = NULL;
+int count = 0, capacity = 0;
+int choice, sortCriteria;
+char searQuery[50];
+
+while (1) 
+
