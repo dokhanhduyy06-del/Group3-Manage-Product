@@ -1,6 +1,8 @@
 #include<stdio.h>
 #include<string.h>
 #include<math.h>
+#include<stdlib.h>
+#include<ctype.h>
 typedef struct{
     char id[20];
     char name[50];
@@ -131,6 +133,123 @@ void EditProduct(Product *productlist,int count){
             printf("Total Product Type : %lld \n",ProductCount);
         }else{
             printf("No products found in stock %s",stocktoFind);
+        }
+    }
+}
+////////////////////////////////////////////////////////////////////////
+typedef struct {
+    char id[20];
+    char name[50];
+    int quantity;
+    float price;
+} Product;
+
+void inputProduct(Product *p) {
+    printf("Enter ID Product: ");
+    fgets(p->id, sizeof(p->id), stdin);
+    p->id[strcspn(p->id, "\n")] = 0; 
+
+    printf("Enter Name Product: ");
+    fgets(p->name, sizeof(p->name), stdin);
+    p->name[strcspn(p->name, "\n")] = 0; 
+
+    printf("Enter Quantity: ");
+    scanf("%d", &p->quantity);
+    getchar();
+
+    printf("Enter Price: ");
+    scanf("%f", &p->price);
+    getchar(); 
+}
+
+void displayProduct(const Product *p) {
+    printf("ID: %s, Name: %s, Quantity: %d, Price: %.2f\n", p->id, p->name, p->quantity, p->price);
+}
+
+void searchProduct(Product *products, int count, const char *query) {
+    printf("Search Results:\n");
+    for (int i = 0; i < count; i++) {
+        if (strstr(strlwr(products[i].name), strlwr(query)) || strstr(strlwr(products[i].id), strlwr(query))) {
+            displayProduct(&products[i]);
+        }
+    }
+}
+
+int compareByName(const void *a, const void *b) {
+    return strcmp(((Product *)a)->name, ((Product *)b)->name);
+}
+
+int compareByQuantity(const void *a, const void *b) {
+    return ((Product *)a)->quantity - ((Product *)b)->quantity;
+}
+
+int compareByPrice(const void *a, const void *b) {
+    return ((Product *)a)->price > ((Product *)b)->price ? 1 : -1;
+}
+
+void sortProducts(Product *products, int count, int criteria) {
+    switch (criteria) {
+        case 1:
+            qsort(products, count, sizeof(Product), compareByName);
+            break;
+        case 2:
+            qsort(products, count, sizeof(Product), compareByQuantity);
+            break;
+        case 3:
+            qsort(products, count, sizeof(Product), compareByPrice);
+            break;
+        default:
+            printf("Invalid sort criteria!\n");
+            break;
+    }
+}
+
+void toLowerCase(char *str) {
+    for (int i = 0; str[i]; i++) {
+        str[i] = tolower(str[i]);
+    }
+}
+
+int main() {
+    Product *products = NULL;
+    int count = 0, capacity = 0;
+    int choice, sortCriteria;
+    char searchQuery[50];
+
+    while (1) {
+        printf("1. Add Product\n2. Search Product\n3. Sort Products\n4. Exit\n");
+        printf("Choose an option: ");
+        scanf("%d", &choice);
+        getchar(); 
+
+        switch (choice) {
+            case 1:
+                if (count == capacity) {
+                    capacity = (capacity == 0) ? 10 : (capacity * 2);
+                    products = realloc(products, capacity * sizeof(Product));
+                }
+                inputProduct(&products[count]);
+                count++;
+                break;
+            case 2:
+                printf("Enter name or ID to search: ");
+                fgets(searchQuery, sizeof(searchQuery), stdin);
+                searchQuery[strcspn(searchQuery, "\n")] = 0; 
+                searchProduct(products, count, searchQuery);
+                break;
+            case 3:
+                printf("Sort by:\n1. Name\n2. Quantity\n3. Price\n");
+                printf("Choose a criteria: ");
+                scanf("%d", &sortCriteria);
+                sortProducts(products, count, sortCriteria);
+                printf("Products sorted successfully.\n");
+                break;
+            case 4:
+                free(products);
+                return 0;
+            default:
+                printf("Invalid option! Please try again.\n");
+                break;
         }
     }
 }
