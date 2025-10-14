@@ -2,7 +2,7 @@
 #include<string.h>
 #include<math.h>
 #include<stdlib.h>
-#include<ctype.h>
+//Define Product structure
 typedef struct{
     char id[20];
     char name[50];
@@ -19,18 +19,18 @@ void inputProduct(Product *p){
 printf("Enter ID Product:");
 fgets(p->id,20,stdin);
 //strcspn removes newline character from string if present /n
-p->id [strcspn(p-> id ,'/n')] = 0;
+p->id [strcspn(p-> id ,"\n")] = 0;
 printf("Enter a Name Product:");
 //stdin is standard input
 fgets(p->name,50,stdin);
 //fgets read string from stdin and store in p -> name
-p->name [strcspn(p -> name , '/n')] = 0;
+p->name [strcspn(p -> name , "\n")] = 0;
 printf("Enter Quantity Products:");
 scanf("%d",&p -> quantity);
 clearInputBuffer();
 printf("Enter a Stock Name:");
 fgets(p -> stockname,50,stdin);
-p -> stockname [strcspn(p-> stockname , 'n')]=0;
+p -> stockname [strcspn(p-> stockname , "\n")]=0;
 printf("Enter Price Product");
 scanf("%f",&p -> price);
 clearInputBuffer();
@@ -42,14 +42,15 @@ void addProduct(Product **productlist , int *count , int *capacity){
     //Check if we need to increase capacity
     if(*count == *capacity){
         *capacity = (*capacity == 0) ? 10 : (*capacity * 2);
-        Product *temp = realloc(*productlist ,(*capacity));
+        Product *temp = realloc(*productlist ,(*capacity) * sizeof(Product));
         if(temp == NULL){
             printf("Memory allocation failed \n");
+            return;
             }
+             *productlist = temp;
     }
-    *productlist = temp;
     printf("Enter a new product : ");
-    inputProduct (&(*productlist)[*count]);
+    inputProduct(&(*productlist)[*count]);
     (*count)++;
     printf("Product added successfuly \n");
 
@@ -57,7 +58,7 @@ void addProduct(Product **productlist , int *count , int *capacity){
 //Find the product by ID
 int findProductById(const Product *productlist, int count , const char *id){
     for(int i = 0 ; i < count ; i++){
-        if(strcmp(productlist[i].id)==0);
+        if(strcmp(productlist[i].id,id)==0);
         return i;
     }
     return -1;
@@ -68,8 +69,8 @@ void EditProduct(Product *productlist,int count){
     printf("=================EDIT PRODUCT =================\n");
     printf("Enter a ID to edit:");
     fgets(IDtoEdit,20,stdin);
-    IDtoEdit(strcspn(IDtoEdit,'/n'))==0;
-    int index = FindProductbyID(productlist,count,IDtoEdit);
+    IDtoEdit[(strcspn(IDtoEdit,"/n"))]==0;
+    int index = findProductById(productlist,count,IDtoEdit);
     if(index != -1){
         printf("Product with ID %S not found",IDtoEdit);
         return;
@@ -80,25 +81,25 @@ void EditProduct(Product *productlist,int count){
     }
 }
 //Delete product function
-    void deleteProduct(Product **produclist , int *count){
+    void deleteProduct(Product **productlist , int *count){
         char IDtoDelete[20];
         printf("================DELETE PRODUCT=================\n");
         printf("Enter a ID to delete:");
-        fgets(IDtoEdit,20,stdin);
-        IDtoDelete[strcspn(IDtoDelete,'/n')] == 0;
-        int index = FindProductById(*productlist,*count,IDtoEdit);
+        fgets(IDtoDelete,20,stdin);
+        IDtoDelete[strcspn(IDtoDelete,"/n")] == 0;
+        int index = findProductById(*productlist,*count,IDtoDelete);
         if(index != -1){
-            if(index 1 != *count -1){
-                (*productlist)[index]=(*produclist)[*count -1];
+            if(index  != *count -1){
+                (*productlist)[index]=(*productlist)[*count -1];
                 (*count)--;
             }
-            printf("Deleted product with ID %s successfully \n",IDtoDelete)
+            printf("Deleted product with ID %s successfully \n",IDtoDelete);
         }else{
-            printf("Product with ID %s not found \n",IDtoDelete)
+            printf("Product with ID %s not found \n",IDtoDelete);
         }
      }
 //Display all products function
-    void displayAllProducts(contst Product *productlist , int count){
+    void displayAllProducts(const Product *productlist , int count){
         printf("================DISPLAY All PRODUTCS=================\n");
         for(int i =0 ; i < count ;i++){
             displayProduct(&productlist[i]);
@@ -113,28 +114,79 @@ void EditProduct(Product *productlist,int count){
         char stocktoFind[50];
         printf("Enter a stock name to statistic");
         fgets(stocktoFind,50,stdin);
-        stocktoFind[strcspn(stocktoFind,'\n')] ==0;
-        int total Quantity = 0;
+        stocktoFind[strcspn(stocktoFind,"/n")] == 0;
+        int totalQuantity = 0;
         long long ProductCount =0;
         printf("=================PRODUCT IN STOCK==================\n");
-        printf("%20s,%50s,%d,%50s,%lld\n","ID","Name","Quantity","Stock Name,"Price"");
+        printf("%20s,%50s,%d,%50s,%lld\n","ID","Name","Quantity","Stock Name,""Price");
         printf("---------------------------------------------------\n");
         for(int i = 0 ; i < count ; i++){
             if(strcmp(productlist[i].stockname,stocktoFind)==0){
                 displayProduct(&productlist[i]);
-                total Quantity += productlist[i].quantity;
-                Product++;
+                totalQuantity += productlist[i].quantity;
+                ProductCount++;
             }
         }
         if(ProductCount > 0){
             printf("---------------------------------------------------\n");
-            printf("Stock Name : %s \n",stocktoFind)
+            printf("Stock Name : %s \n",stocktoFind);
             printf("Total Product :%d \n",totalQuantity);
             printf("Total Product Type : %lld \n",ProductCount);
         }else{
             printf("No products found in stock %s",stocktoFind);
         }
     }
+    void showMenu() {
+    printf("\n\n===== MENU QUAN LY SAN PHAM (C) =====\n");
+    printf("1. Them san pham\n");
+    printf("2. Sua san pham\n");
+    printf("3. Xoa san pham\n");
+    printf("4. Hien thi danh sach san pham\n");
+    printf("5. Thong ke san pham theo kho\n");
+    printf("0. Thoat chuong trinh\n");
+    printf("=======================================\n");
+    printf("Chon chuc nang: ");
+}
+
+int main() {
+    Product* productList = NULL; // Con trỏ quản lý mảng động
+    int productCount = 0;        // Số sản phẩm hiện có
+    int capacity = 0;            // Sức chứa của mảng
+    int choice;
+
+    do {
+        showMenu();
+        scanf("%d", &choice);
+        clearInputBuffer();
+
+        switch (choice) {
+            case 1:
+                addProduct(&productList, &productCount, &capacity);
+                break;
+            case 2:
+                EditProduct(productList, productCount);
+                break;
+            case 3:
+                deleteProduct(&productList, &productCount);
+                break;
+            case 4:
+                displayAllProducts(productList, productCount);
+                break;
+            case 5:
+                statisticProducts(productList, productCount);
+                break;
+            case 0:
+                printf("Dang thoat chuong trinh...\n");
+                break;
+            default:
+                printf("Lua chon khong hop le. Vui long chon lai.\n");
+                break;
+        }
+    } while (choice != 0);
+
+    free(productList);
+
+    return 0;
 }
 ////////////////////////////////////////////////////////////////////////
 typedef struct {
