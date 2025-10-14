@@ -136,59 +136,6 @@ void EditProduct(Product *productlist,int count){
             printf("No products found in stock %s",stocktoFind);
         }
     }
-    void showMenu() {
-    printf("\n\n===== MENU QUAN LY SAN PHAM (C) =====\n");
-    printf("1. Them san pham\n");
-    printf("2. Sua san pham\n");
-    printf("3. Xoa san pham\n");
-    printf("4. Hien thi danh sach san pham\n");
-    printf("5. Thong ke san pham theo kho\n");
-    printf("0. Thoat chuong trinh\n");
-    printf("=======================================\n");
-    printf("Chon chuc nang: ");
-}
-
-int main() {
-    Product* productList = NULL; // Con trỏ quản lý mảng động
-    int productCount = 0;        // Số sản phẩm hiện có
-    int capacity = 0;            // Sức chứa của mảng
-    int choice;
-
-    do {
-        showMenu();
-        scanf("%d", &choice);
-        clearInputBuffer();
-
-        switch (choice) {
-            case 1:
-                addProduct(&productList, &productCount, &capacity);
-                break;
-            case 2:
-                EditProduct(productList, productCount);
-                break;
-            case 3:
-                deleteProduct(&productList, &productCount);
-                break;
-            case 4:
-                displayAllProducts(productList, productCount);
-                break;
-            case 5:
-                statisticProducts(productList, productCount);
-                break;
-            case 0:
-                printf("Dang thoat chuong trinh...\n");
-                break;
-            default:
-                printf("Lua chon khong hop le. Vui long chon lai.\n");
-                break;
-        }
-    } while (choice != 0);
-
-    free(productList);
-
-    return 0;
-}
-////////////////////////////////////////////////////////////////////////
 void searchProduct(Product *products, int count, const char *query) {
     printf("Search Results:\n");
     for (int i = 0; i < count; i++) {
@@ -197,9 +144,9 @@ void searchProduct(Product *products, int count, const char *query) {
         }
     }
 }
-
 int compareByName(const void *a, const void *b) {
     return strcmp(((Product *)a)->name, ((Product *)b)->name);
+    
 }
 
 int compareByQuantity(const void *a, const void *b) {
@@ -226,53 +173,8 @@ void sortProducts(Product *products, int count, int criteria) {
             break;
     }
 }
-
 void toLowerCase(char *str) {
     for (int i = 0; str[i]; i++) {
         str[i] = tolower(str[i]);
-    }
-}
-
-int main() {
-    Product *products = NULL;
-    int count = 0, capacity = 0;
-    int choice, sortCriteria;
-    char searchQuery[50];
-
-    while (1) {
-        printf("1. Add Product\n2. Search Product\n3. Sort Products\n4. Exit\n");
-        printf("Choose an option: ");
-        scanf("%d", &choice);
-        getchar(); 
-
-        switch (choice) {
-            case 1:
-                if (count == capacity) {
-                    capacity = (capacity == 0) ? 10 : (capacity * 2);
-                    products = realloc(products, capacity * sizeof(Product));
-                }
-                inputProduct(&products[count]);
-                count++;
-                break;
-            case 2:
-                printf("Enter name or ID to search: ");
-                fgets(searchQuery, sizeof(searchQuery), stdin);
-                searchQuery[strcspn(searchQuery, "\n")] = 0; 
-                searchProduct(products, count, searchQuery);
-                break;
-            case 3:
-                printf("Sort by:\n1. Name\n2. Quantity\n3. Price\n");
-                printf("Choose a criteria: ");
-                scanf("%d", &sortCriteria);
-                sortProducts(products, count, sortCriteria);
-                printf("Products sorted successfully.\n");
-                break;
-            case 4:
-                free(products);
-                return 0;
-            default:
-                printf("Invalid option! Please try again.\n");
-                break;
-        }
     }
 }
