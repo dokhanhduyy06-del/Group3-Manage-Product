@@ -189,6 +189,50 @@ int main() {
     return 0;
 }
 ////////////////////////////////////////////////////////////////////////
+void searchProduct(Product *products, int count, const char *query) {
+    printf("Search Results:\n");
+    for (int i = 0; i < count; i++) {
+        if (strstr(strlwr(products[i].name), strlwr(query)) || strstr(strlwr(products[i].id), strlwr(query))) {
+            displayProduct(&products[i]);
+        }
+    }
+}
+
+int compareByName(const void *a, const void *b) {
+    return strcmp(((Product *)a)->name, ((Product *)b)->name);
+}
+
+int compareByQuantity(const void *a, const void *b) {
+    return ((Product *)a)->quantity - ((Product *)b)->quantity;
+}
+
+int compareByPrice(const void *a, const void *b) {
+    return ((Product *)a)->price > ((Product *)b)->price ? 1 : -1;
+}
+
+void sortProducts(Product *products, int count, int criteria) {
+    switch (criteria) {
+        case 1:
+            qsort(products, count, sizeof(Product), compareByName);
+            break;
+        case 2:
+            qsort(products, count, sizeof(Product), compareByQuantity);
+            break;
+        case 3:
+            qsort(products, count, sizeof(Product), compareByPrice);
+            break;
+        default:
+            printf("Invalid sort criteria!\n");
+            break;
+    }
+}
+
+void toLowerCase(char *str) {
+    for (int i = 0; str[i]; i++) {
+        str[i] = tolower(str[i]);
+    }
+}
+
 int main() {
     Product *products = NULL;
     int count = 0, capacity = 0;
@@ -232,6 +276,3 @@ int main() {
         }
     }
 }
-
-
-
