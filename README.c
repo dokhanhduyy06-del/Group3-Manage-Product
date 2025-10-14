@@ -20,17 +20,21 @@ printf("Enter ID Product:");
 fgets(p->id,20,stdin);
 //strcspn removes newline character from string if present /n
 p->id [strcspn(p-> id ,"\n")] = 0;
+    
 printf("Enter a Name Product:");
 //stdin is standard input
 fgets(p->name,50,stdin);
 //fgets read string from stdin and store in p -> name
 p->name [strcspn(p -> name , "\n")] = 0;
+    
 printf("Enter Quantity Products:");
 scanf("%d",&p -> quantity);
 clearInputBuffer();
+    
 printf("Enter a Stock Name:");
 fgets(p -> stockname,50,stdin);
 p -> stockname [strcspn(p-> stockname , "\n")]=0;
+    
 printf("Enter Price Product");
 scanf("%f",&p -> price);
 clearInputBuffer();
