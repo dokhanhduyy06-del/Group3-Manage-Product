@@ -1,13 +1,12 @@
 #include<stdio.h>
 #include<string.h>
 #include<math.h>
-#include<stdlib.h>
 typedef struct{
     char id[20];
     char name[50];
     int quantity;
     char stockname[50];
-    float price;
+    long long price;
 }Product;
 //clear input buffer function to avoid infinite loop
 void clearInputBuffer(){
@@ -34,7 +33,7 @@ printf("Enter Price Product");
 scanf("%f",&p -> price);
 clearInputBuffer();
 }
-void display Product(const Product *p){
+void displayProduct(const Product *p){
 printf("%20s - %50s - %d - %50s - %lld\n",p -> id , p -> name , p -> quantity , p -> stockname);
 }
 void addProduct(Product **productlist , int *count , int *capacity){
@@ -77,45 +76,63 @@ void EditProduct(Product *productlist,int count){
         inputProduct(&productlist[index]);
         printf("Product updated succesfully \n");
     }
-
-
 }
-Product * productlist = NULL;
-int count = 0, capacity = 0;
-int choice, sortCriteria;
-char searQuery[50];
-
-while (1) { 
-     printf("1. Add product\n2. Search product\n3. Sort product\n4. Exit\n")
-         printf("Choose an option: ");
-    scanf("%d", choice);
-    clearInputBufffer();
-
-    switch (choice) { 
-case 1:
-       addProduct(&productlist, &count, &capacity);
-       break;
-case 2:
-       printf("Enter name or ID to search: ");
-       fgets(searchQuery, 50, stdin);
-       searchQuery[strcspn(searchQuery, "\n")] = 0;
-       searchProduct(productlist, count, searchQuery);
-       break;
-case 3:
-       printf("Sort by: \n1. Name\n2. Quality\n3. Price\n");
-       printf("Choose a criteria: ");
-       scanf("%d", &sortCriteria);
-       sortProducts(productlist, count, sortCriteria);
-       printf("Products sorted successfully.\n");
-       break; 
-case 4:
-      free(productlist);
-      return 0;
-default;
-      printf("Invalid option! Please try again. \n ");
-      break;
+//Delete product function
+    void deleteProduct(Product **produclist , int *count){
+        char IDtoDelete[20];
+        printf("================DELETE PRODUCT=================\n");
+        printf("Enter a ID to delete:");
+        fgets(IDtoEdit,20,stdin);
+        IDtoDelete[strcspn(IDtoDelete,'/n')] == 0;
+        int index = FindProductById(*productlist,*count,IDtoEdit);
+        if(index != -1){
+            if(index 1 != *count -1){
+                (*productlist)[index]=(*produclist)[*count -1];
+                (*count)--;
+            }
+            printf("Deleted product with ID %s successfully \n",IDtoDelete)
+        }else{
+            printf("Product with ID %s not found \n",IDtoDelete)
+        }
+     }
+//Display all products function
+    void displayAllProducts(contst Product *productlist , int count){
+        printf("================DISPLAY All PRODUTCS=================\n");
+        for(int i =0 ; i < count ;i++){
+            displayProduct(&productlist[i]);
+        }
     }
-}
+//Statistitic Product in Inventory
+    void statisticProducts(const Product *productlist , int count){
+        if(count == 0){
+            printf("No products in inventory to statistic");
+            return;
+        }
+        char stocktoFind[50];
+        printf("Enter a stock name to statistic");
+        fgets(stocktoFind,50,stdin);
+        stocktoFind[strcspn(stocktoFind,'\n')] ==0;
+        int total Quantity = 0;
+        long long ProductCount =0;
+        printf("=================PRODUCT IN STOCK==================\n");
+        printf("%20s,%50s,%d,%50s,%lld\n","ID","Name","Quantity","Stock Name,"Price"");
+        printf("---------------------------------------------------\n");
+        for(int i = 0 ; i < count ; i++){
+            if(strcmp(productlist[i].stockname,stocktoFind)==0){
+                displayProduct(&productlist[i]);
+                total Quantity += productlist[i].quantity;
+                Product++;
+            }
+        }
+        if(ProductCount > 0){
+            printf("---------------------------------------------------\n");
+            printf("Stock Name : %s \n",stocktoFind)
+            printf("Total Product :%d \n",totalQuantity);
+            printf("Total Product Type : %lld \n",ProductCount);
+        }else{
+            printf("No products found in stock %s",stocktoFind);
+        }
+    }
 }
 
 
