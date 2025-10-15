@@ -219,6 +219,7 @@ int main() {
                 scanf("%d", &sortCriteria);
                 sortProducts(products, count, sortCriteria);
                 printf("Products sorted successfully.\n");
+                displayAllProducts(productlist, count);
                 break;
             case 4:
                 free(products);
