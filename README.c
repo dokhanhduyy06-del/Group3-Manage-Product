@@ -179,7 +179,7 @@ void sortProducts(Product *products, int count, int criteria) {
             break;
     }
 }
-void displayAllProducts(Product *products, int count) {
+void displayProducts(Product *products, int count) {
     printf("\n--- Product List ---\n");
     if (count == 0) {
         printf("List is empty.\n");
