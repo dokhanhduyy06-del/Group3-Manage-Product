@@ -2,6 +2,7 @@
 #include<string.h>
 #include<math.h>
 #include<stdlib.h>
+#include<ctype.h>
 //Define Product structure
 typedef struct{
     char id[20];
