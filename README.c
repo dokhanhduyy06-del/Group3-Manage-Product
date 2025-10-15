@@ -143,13 +143,25 @@ void EditProduct(Product *productlist,int count){
     }
 
 void searchProduct(Product *products, int count, const char *query) {
+    char queryLower[50];
+    strcpy(queryLower, query);
+    toLowerCase(queryLower); 
     printf("Search Results:\n");
     for (int i = 0; i < count; i++) {
-        if (strstr(strlwr(products[i].name), strlwr(query)) || strstr(strlwr(products[i].id), strlwr(query))) {
+        char nameLower[50];
+        char idLower[20];
+
+        strcpy(nameLower, products[i].name);
+        strcpy(idLower, products[i].id);
+        toLowerCase(nameLower); 
+        toLowerCase(idLower); 
+
+        
+        if (strstr(nameLower, queryLower) || strstr(idLower, queryLower)) {
             displayProduct(&products[i]);
         }
     }
-}
+
 
 int compareByName(const void *a, const void *b) {
     return strcmp(((Product *)a)->name, ((Product *)b)->name);
@@ -219,7 +231,7 @@ int main() {
                 scanf("%d", &sortCriteria);
                 sortProducts(products, count, sortCriteria);
                 printf("Products sorted successfully.\n");
-                displayAllProducts(productlist, count);
+                displayAllProducts(products, count);
                 break;
             case 4:
                 free(products);
