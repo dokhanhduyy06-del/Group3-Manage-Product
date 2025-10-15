@@ -142,7 +142,83 @@ void EditProduct(Product *productlist,int count){
         }
     }
 
-case 2:
+void searchProduct(Product *products, int count, const char *query) {
+    printf("Search Results:\n");
+    for (int i = 0; i < count; i++) {
+        if (strstr(strlwr(products[i].name), strlwr(query)) || strstr(strlwr(products[i].id), strlwr(query))) {
+            displayProduct(&products[i]);
+        }
+    }
+}
+int compareByName(const void *a, const void *b) {
+    return strcmp(((Product *)a)->name, ((Product *)b)->name);
+    
+}
+
+int compareByQuantity(const void *a, const void *b) {
+    return ((Product *)a)->quantity - ((Product *)b)->quantity;
+}
+
+int compareByPrice(const void *a, const void *b) {
+    return ((Product *)a)->price > ((Product *)b)->price ? 1 : -1;
+}
+
+void sortProducts(Product *products, int count, int criteria) {
+    switch (criteria) {
+        case 1:
+            qsort(products, count, sizeof(Product), compareByName);
+            break;
+        case 2:
+            qsort(products, count, sizeof(Product), compareByQuantity);
+            break;
+        case 3:
+            qsort(products, count, sizeof(Product), compareByPrice);
+            break;
+        default:
+            printf("Invalid sort criteria!\n");
+            break;
+    }
+}
+void displayAllProducts(Product *products, int count) {
+    printf("\n--- Product List ---\n");
+    if (count == 0) {
+        printf("List is empty.\n");
+        return;
+    }
+    for (int i = 0; i < count; i++) {
+        displayProduct(&products[i]);
+    }
+    printf("--------------------\n");
+}
+
+void toLowerCase(char *str) {
+    for (int i = 0; str[i]; i++) {
+        str[i] = tolower(str[i]);
+    }
+}
+
+int main() {
+    Product *products = NULL;
+    int count = 0, capacity = 0;
+    int choice, sortCriteria;
+    char searchQuery[50];
+
+    while (1) {
+        printf("1. Add Product\n2. Search Product\n3. Sort Products\n4. Exit\n");
+        printf("Choose an option: ");
+        scanf("%d", &choice);
+        getchar(); 
+
+        switch (choice) {
+            case 1:
+                if (count == capacity) {
+                    capacity = (capacity == 0) ? 10 : (capacity * 2);
+                    products = realloc(products, capacity * sizeof(Product));
+                }
+                inputProduct(&products[count]);
+                count++;
+                break;
+            case 2:
                 printf("Enter name or ID to search: ");
                 fgets(searchQuery, sizeof(searchQuery), stdin);
                 searchQuery[strcspn(searchQuery, "\n")] = 0; 
