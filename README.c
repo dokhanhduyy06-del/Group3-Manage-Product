@@ -44,7 +44,7 @@ void inputProduct(Product *p) {
 
 // Display product function
 void displayProduct(const Product *p) {
-    printf("%20s | %50s | %d | %50s | %lld\n", p->id, p->name, p->quantity, p->stockname, p->price);
+    printf("%-20s | %-50s | %-8d | %-20s | %-15lld\n", p->id, p->name, p->quantity, p->stockname, p->price);
 }
 
 // Add product function
@@ -118,7 +118,7 @@ void displayAllProducts(const Product *productlist, int count) {
         printf("No products available.\n");
         return;
     }
-    printf("%-20s | %-50s | %-5s | %-20s | %-10s\n", "ID", "Name", "Quantity", "Stock Name", "Price");
+    printf("%-20s | %-50s | %-5s | %-20s | %-15s\n", "ID", "Name", "Quantity", "Stock Name", "Price");
     printf("------------------------------------------------------\n");
     for (int i = 0; i < count; i++) {
         displayProduct(&productlist[i]);
@@ -139,7 +139,7 @@ void statisticProducts(const Product *productlist, int count) {
     int totalQuantity = 0;
     long long productCount = 0;
     printf("=================PRODUCT IN STOCK==================\n");
-    printf("%20s | %50s | %d | %50s | %lld\n", "ID", "Name", "Quantity", "Stock Name", "Price");
+    printf("%-20s | %-50s | %-8d | %-20s | %-15s\n", "ID", "Name", "Quantity", "Stock Name", "Price");
     printf("---------------------------------------------------\n");
     for (int i = 0; i < count; i++) {
         if (strcmp(productlist[i].stockname, stocktoFind) == 0) {
