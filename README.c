@@ -140,10 +140,11 @@ void EditProduct(Product *productlist,int count){
             printf("No products found in stock %s",stocktoFind);
         }
     }
+
 void searchProduct(Product *products, int count, const char *query) {
     printf("Search Results:\n");
     for (int i = 0; i < count; i++) {
-        if (strstr(strlwr(products[i].name), strlwr(query)) || strstr(strlwr(products[i].id), strlwr(query))) {
+        if (strcasecmp(products[i].name, query) == 0 || strcasecmp(products[i].id, query) == 0) {
             displayProduct(&products[i]);
         }
     }
