@@ -145,14 +145,14 @@ void EditProduct(Product *productlist,int count){
 void searchProduct(Product *products, int count, const char *query) {
     printf("Search Results:\n");
     for (int i = 0; i < count; i++) {
-        if (strcasecmp(products[i].name, query) == 0 || strcasecmp(products[i].id, query) == 0) {
+        if (strstr(strlwr(products[i].name), strlwr(query)) || strstr(strlwr(products[i].id), strlwr(query))) {
             displayProduct(&products[i]);
         }
     }
 }
+
 int compareByName(const void *a, const void *b) {
     return strcmp(((Product *)a)->name, ((Product *)b)->name);
-    
 }
 
 int compareByQuantity(const void *a, const void *b) {
@@ -179,8 +179,53 @@ void sortProducts(Product *products, int count, int criteria) {
             break;
     }
 }
+
 void toLowerCase(char *str) {
     for (int i = 0; str[i]; i++) {
         str[i] = tolower(str[i]);
+    }
+}
+
+int main() {
+    Product *products = NULL;
+    int count = 0, capacity = 0;
+    int choice, sortCriteria;
+    char searchQuery[50];
+
+    while (1) {
+        printf("1. Add Product\n2. Search Product\n3. Sort Products\n4. Exit\n");
+        printf("Choose an option: ");
+        scanf("%d", &choice);
+        getchar(); // Xóa ký tự newline
+
+        switch (choice) {
+            case 1:
+                if (count == capacity) {
+                    capacity = (capacity == 0) ? 10 : (capacity * 2);
+                    products = realloc(products, capacity * sizeof(Product));
+                }
+                inputProduct(&products[count]);
+                count++;
+                break;
+            case 2:
+                printf("Enter name or ID to search: ");
+                fgets(searchQuery, sizeof(searchQuery), stdin);
+                searchQuery[strcspn(searchQuery, "\n")] = 0; // Xóa ký tự newline
+                searchProduct(products, count, searchQuery);
+                break;
+            case 3:
+                printf("Sort by:\n1. Name\n2. Quantity\n3. Price\n");
+                printf("Choose a criteria: ");
+                scanf("%d", &sortCriteria);
+                sortProducts(products, count, sortCriteria);
+                printf("Products sorted successfully.\n");
+                break;
+            case 4:
+                free(products);
+                return 0;
+            default:
+                printf("Invalid option! Please try again.\n");
+                break;
+        }
     }
 }
