@@ -160,10 +160,26 @@ void statisticProducts(const Product *productlist, int count) {
 }
 
 // Search product function
-void searchProduct(const Product *products, int count, const char *query) {
+void searchProduct(Product *products, int count, const char *query) {
     printf("Search Results:\n");
+
+    // 1. Tạo một bản sao của chuỗi query để chuyển thành chữ thường
+    char lower_query[100]; // Đảm bảo kích thước đủ lớn
+    strcpy(lower_query, query);
+    strlwr(lower_query);
+
     for (int i = 0; i < count; i++) {
-        if (strstr(products[i].name, query) || strstr(products[i].id, query)) {
+        // 2. Tạo bản sao cho tên và ID sản phẩm trong mỗi vòng lặp
+        char lower_name[100];
+        strcpy(lower_name, products[i].name);
+        strlwr(lower_name);
+
+        char lower_id[100];
+        strcpy(lower_id, products[i].id);
+        strlwr(lower_id);
+
+        // 3. So sánh trên các chuỗi đã được chuyển thành chữ thường
+        if (strstr(lower_name, lower_query) || strstr(lower_id, lower_query)) {
             displayProduct(&products[i]);
         }
     }
