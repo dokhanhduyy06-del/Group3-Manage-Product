@@ -4,7 +4,6 @@
 #include <ctype.h>
 #include <math.h>
 
-// Define Product structure
 typedef struct {
     char id[20];
     char name[50];
@@ -13,13 +12,11 @@ typedef struct {
     long long price;
 } Product;
 
-// Clear input buffer function to avoid infinite loop
 void clearInputBuffer() {
     int c;
     while ((c = getchar()) != '\n' && c != EOF);
 }
 
-// Input product function
 void inputProduct(Product *p) {
     printf("Enter ID Product: ");
     fgets(p->id, sizeof(p->id), stdin);
@@ -42,12 +39,10 @@ void inputProduct(Product *p) {
     clearInputBuffer();
 }
 
-// Display product function
 void displayProduct(const Product *p) {
     printf("%-20s | %-50s | %-8d | %-20s | %-15lld\n", p->id, p->name, p->quantity, p->stockname, p->price);
 }
 
-// Add product function
 void addProduct(Product **productlist, int *count, int *capacity) {
     if (*count == *capacity) {
         *capacity = (*capacity == 0) ? 10 : (*capacity * 2);
@@ -64,7 +59,6 @@ void addProduct(Product **productlist, int *count, int *capacity) {
     printf("Product added successfully.\n");
 }
 
-// Find the product by ID
 int findProductById(const Product *productlist, int count, const char *id) {
     for (int i = 0; i < count; i++) {
         if (strcmp(productlist[i].id, id) == 0) {
@@ -74,7 +68,6 @@ int findProductById(const Product *productlist, int count, const char *id) {
     return -1;
 }
 
-// Edit product function
 void editProduct(Product *productlist, int count) {
     char IDtoEdit[20];
     printf("=================EDIT PRODUCT =================\n");
@@ -93,7 +86,6 @@ void editProduct(Product *productlist, int count) {
     }
 }
 
-// Delete product function
 void deleteProduct(Product **productlist, int *count) {
     char IDtoDelete[20];
     printf("================DELETE PRODUCT=================\n");
@@ -111,7 +103,6 @@ void deleteProduct(Product **productlist, int *count) {
     }
 }
 
-// Display all products function
 void displayAllProducts(const Product *productlist, int count) {
     printf("================DISPLAY ALL PRODUCTS=================\n");
     if (count == 0) {
@@ -125,7 +116,6 @@ void displayAllProducts(const Product *productlist, int count) {
     }
 }
 
-// Statistic Products in Inventory
 void statisticProducts(const Product *productlist, int count) {
     if (count == 0) {
         printf("No products in inventory to statistic.\n");
@@ -159,17 +149,14 @@ void statisticProducts(const Product *productlist, int count) {
     }
 }
 
-// Search product function
 void searchProduct(Product *products, int count, const char *query) {
     printf("Search Results:\n");
 
-    // 1. Tạo một bản sao của chuỗi query để chuyển thành chữ thường
-    char lower_query[100]; // Đảm bảo kích thước đủ lớn
+    char lower_query[100]; 
     strcpy(lower_query, query);
     strlwr(lower_query);
 
     for (int i = 0; i < count; i++) {
-        // 2. Tạo bản sao cho tên và ID sản phẩm trong mỗi vòng lặp
         char lower_name[100];
         strcpy(lower_name, products[i].name);
         strlwr(lower_name);
@@ -178,14 +165,12 @@ void searchProduct(Product *products, int count, const char *query) {
         strcpy(lower_id, products[i].id);
         strlwr(lower_id);
 
-        // 3. So sánh trên các chuỗi đã được chuyển thành chữ thường
         if (strstr(lower_name, lower_query) || strstr(lower_id, lower_query)) {
             displayProduct(&products[i]);
         }
     }
 }
 
-// Sort products functions
 int compareByName(const void *a, const void *b) {
     return strcmp(((Product *)a)->name, ((Product *)b)->name);
 }
@@ -217,7 +202,6 @@ void sortProducts(Product *products, int count, int criteria) {
     printf("Products sorted successfully.\n");
 }
 
-// Show menu function
 void showMenu() {
     printf("\n\n===== PRODUCT MANAGEMENT MENU (C) =====\n");
     printf("1. Add Product \n");
