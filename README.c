@@ -1,285 +1,250 @@
 #include <stdio.h>
-#include <string.h>
 #include <stdlib.h>
-#include <ctype.h>
-#include <math.h>
+#include <string.h>
+#define MAX 100
 
-typedef struct {
-    char id[20];
-    char name[50];
-    int quantity;
-    char stockname[50];
-    long long price;
-} Product;
+char names[MAX][50];
+double prices[MAX];
+int quantities[MAX];
+int count = 0;
 
-void clearInputBuffer() {
-    int c;
-    while ((c = getchar()) != '\n' && c != EOF);
+
+void addProduct() {
+    printf("Enter product name (Ex: Banh_Mi): ");
+    scanf("%s", names[count]);
+    printf("Nhap gia: ");
+    scanf("%lf", &prices[count]);
+    printf("Nhap so luong: ");
+    scanf("%d", &quantities[count]);
+    count++;
+    printf("Da them san pham!\n");
 }
 
-void inputProduct(Product *p) {
-    printf("Enter ID Product: ");
-    fgets(p->id, sizeof(p->id), stdin);
-    p->id[strcspn(p->id, "\n")] = 0;
 
-    printf("Enter a Name Product: ");
-    fgets(p->name, sizeof(p->name), stdin);
-    p->name[strcspn(p->name, "\n")] = 0;
-
-    printf("Enter Quantity Products: ");
-    scanf("%d", &p->quantity);
-    clearInputBuffer();
-
-    printf("Enter a Stock Name: ");
-    fgets(p->stockname, sizeof(p->stockname), stdin);
-    p->stockname[strcspn(p->stockname, "\n")] = 0;
-
-    printf("Enter Price Product: ");
-    scanf("%lld", &p->price);
-    clearInputBuffer();
-}
-
-void displayProduct(const Product *p) {
-    printf("%-20s | %-50s | %-8d | %-20s | %-15lld\n", p->id, p->name, p->quantity, p->stockname, p->price);
-}
-
-void addProduct(Product **productlist, int *count, int *capacity) {
-    if (*count == *capacity) {
-        *capacity = (*capacity == 0) ? 10 : (*capacity * 2);
-        Product *temp = realloc(*productlist, (*capacity) * sizeof(Product));
-        if (temp == NULL) {
-            printf("Memory allocation failed\n");
-            return;
-        }
-        *productlist = temp;
-    }
-    printf("Enter a new product: \n");
-    inputProduct(&(*productlist)[*count]);
-    (*count)++;
-    printf("Product added successfully.\n");
-}
-
-int findProductById(const Product *productlist, int count, const char *id) {
-    for (int i = 0; i < count; i++) {
-        if (strcmp(productlist[i].id, id) == 0) {
-            return i;
-        }
-    }
-    return -1;
-}
-
-void editProduct(Product *productlist, int count) {
-    char IDtoEdit[20];
-    printf("=================EDIT PRODUCT =================\n");
-    printf("Enter an ID to edit: ");
-    fgets(IDtoEdit, sizeof(IDtoEdit), stdin);
-    IDtoEdit[strcspn(IDtoEdit, "\n")] = 0;
-
-    int index = findProductById(productlist, count, IDtoEdit);
-    if (index == -1) {
-        printf("Product with ID %s not found.\n", IDtoEdit);
-        return;
-    } else {
-        printf("Editing product with ID %s \n", IDtoEdit);
-        inputProduct(&productlist[index]);
-        printf("Product updated successfully.\n");
-    }
-}
-
-void deleteProduct(Product **productlist, int *count) {
-    char IDtoDelete[20];
-    printf("================DELETE PRODUCT=================\n");
-    printf("Enter an ID to delete: ");
-    fgets(IDtoDelete, sizeof(IDtoDelete), stdin);
-    IDtoDelete[strcspn(IDtoDelete, "\n")] = 0;
-
-    int index = findProductById(*productlist, *count, IDtoDelete);
-    if (index != -1) {
-        (*productlist)[index] = (*productlist)[*count - 1];
-        (*count)--;
-        printf("Deleted product with ID %s successfully.\n", IDtoDelete);
-    } else {
-        printf("Product with ID %s not found.\n", IDtoDelete);
-    }
-}
-
-void displayAllProducts(const Product *productlist, int count) {
-    printf("================DISPLAY ALL PRODUCTS=================\n");
+void displayProducts() {
+	int i;
     if (count == 0) {
-        printf("No products available.\n");
+        printf("Danh sach trong!\n");
         return;
     }
-    printf("%-20s | %-50s | %-5s | %-20s | %-15s\n", "ID", "Name", "Quantity", "Stock Name", "Price");
-    printf("------------------------------------------------------\n");
-    for (int i = 0; i < count; i++) {
-        displayProduct(&productlist[i]);
+    printf("\n--- DANH SACH SAN PHAM ---\n");
+    for (i = 0; i < count; i++) {
+        printf("%d. Ten: %s | Gia: %.2f | So luong: %d\n",
+               i + 1, names[i], prices[i], quantities[i]);
     }
 }
 
-void statisticProducts(const Product *productlist, int count) {
+
+void editProduct() {
     if (count == 0) {
-        printf("No products in inventory to statistic.\n");
+        printf("Danh sach trong!\n");
         return;
     }
-    char stocktoFind[50];
-    printf("Enter a stock name to statistic: ");
-    fgets(stocktoFind, sizeof(stocktoFind), stdin);
-    stocktoFind[strcspn(stocktoFind, "\n")] = 0;
-
-    int totalQuantity = 0;
-    long long productCount = 0;
-    printf("=================PRODUCT IN STOCK==================\n");
-    printf("%-20s | %-50s | %-8d | %-20s | %-15s\n", "ID", "Name", "Quantity", "Stock Name", "Price");
-    printf("---------------------------------------------------\n");
-    for (int i = 0; i < count; i++) {
-        if (strcmp(productlist[i].stockname, stocktoFind) == 0) {
-            displayProduct(&productlist[i]);
-            totalQuantity += productlist[i].quantity;
-            productCount++;
-        }
+    displayProducts();
+    int index, choice;
+    printf("Nhap so thu tu san pham muon chinh sua: ");
+    scanf("%d", &index);
+    if (index < 1 || index > count) {
+        printf("So thu tu khong hop le!\n");
+        return;
     }
+    index--;
 
-    if (productCount > 0) {
-        printf("---------------------------------------------------\n");
-        printf("Stock Name: %s\n", stocktoFind);
-        printf("Total Quantity: %d\n", totalQuantity);
-        printf("Total Product Types: %lld\n", productCount);
-    } else {
-        printf("No products found in stock %s.\n", stocktoFind);
-    }
-}
+    printf("Chon thong tin can chinh sua:\n");
+    printf("1. Ten san pham\n2. Gia\n3. So luong\nNhap lua chon: ");
+    scanf("%d", &choice);
 
-void searchProduct(Product *products, int count, const char *query) {
-    printf("Search Results:\n");
-
-    char lower_query[100]; 
-    strcpy(lower_query, query);
-    strlwr(lower_query);
-
-    for (int i = 0; i < count; i++) {
-        char lower_name[100];
-        strcpy(lower_name, products[i].name);
-        strlwr(lower_name);
-
-        char lower_id[100];
-        strcpy(lower_id, products[i].id);
-        strlwr(lower_id);
-
-        if (strstr(lower_name, lower_query) || strstr(lower_id, lower_query)) {
-            displayProduct(&products[i]);
-        }
-    }
-}
-
-int compareByName(const void *a, const void *b) {
-    return strcmp(((Product *)a)->name, ((Product *)b)->name);
-}
-
-int compareByQuantity(const void *a, const void *b) {
-    return ((Product *)a)->quantity - ((Product *)b)->quantity;
-}
-
-int compareByPrice(const void *a, const void *b) {
-    return ((Product *)a)->price - ((Product *)b)->price;
-}
-
-void sortProducts(Product *products, int count, int criteria) {
-    switch (criteria) {
+    switch (choice) {
         case 1:
-            qsort(products, count, sizeof(Product), compareByName);
+            printf("Nhap ten moi: ");
+            scanf("%s", names[index]);
             break;
         case 2:
-            qsort(products, count, sizeof(Product), compareByQuantity);
+            printf("Nhap gia moi: ");
+            scanf("%lf", &prices[index]);
             break;
         case 3:
-            qsort(products, count, sizeof(Product), compareByPrice);
-            displayAllProducts(products, count);
+            printf("Nhap so luong moi: ");
+            scanf("%d", &quantities[index]);
             break;
         default:
-            printf("Invalid sort criteria!\n");
+            printf("Lua chon khong hop le!\n");
             return;
     }
-    printf("Products sorted successfully.\n");
+    printf("Da cap nhat san pham!\n");
 }
 
-void showMenu() {
-    printf("\n\n===== PRODUCT MANAGEMENT MENU (C) =====\n");
-    printf("1. Add Product \n");
-    printf("2. Edit Product \n");
-    printf("3. Delete Product \n");
-    printf("4. Search Product \n");
-    printf("5. Sort Product \n");
-    printf("6. Display All Products \n");
-    printf("7. Statistics By Stock \n");
-    printf("8. Exit Program \n");
-    printf("==============================\n");
-    printf("Choose an option: ");
+
+void deleteProduct() {
+	int i;
+    if (count == 0) {
+        printf("Danh sach trong!\n");
+        return;
+    }
+    displayProducts();
+    int index;
+    printf("Nhap so thu tu san pham muon xoa: ");
+    scanf("%d", &index);
+    if (index < 1 || index > count) {
+        printf("So thu tu khong hop le!\n");
+        return;
+    }
+    index--;
+    for (i = index; i < count - 1; i++) {
+        strcpy(names[i], names[i + 1]);
+        prices[i] = prices[i + 1];
+        quantities[i] = quantities[i + 1];
+    }
+    count--;
+    printf("Da xoa san pham!\n");
 }
 
-int main() {
-    Product *products = NULL;
-    int count = 0, capacity = 0;
-    int choice, sortCriteria;
-    char searchQuery[50];
 
-    while (1) {
-        showMenu();
-        scanf("%d", &choice);
-        clearInputBuffer();
+void searchProduct() {
+	int i;
+    if (count == 0) {
+        printf("Danh sach trong!\n");
+        return;
+    }
+    int choice;
+    printf("Tim theo:\n1. Ten\n2. Gia\n3. So luong\nNhap lua chon: ");
+    scanf("%d", &choice);
 
-        switch (choice) {
-            case 1:
-                addProduct(&products, &count, &capacity);
-                break;
-            case 2:
-                if (count == 0) {
-                    printf("No products to edit.\n");
-                } else {
-                    editProduct(products, count);
-                }
-                break;
-            case 3:
-                if (count == 0) {
-                    printf("No products to delete.\n");
-                } else {
-                    deleteProduct(&products, &count);
-                }
-                break;
-            case 4:
-                if (count == 0) {
-                    printf("No products to search.\n");
-                } else {
-                    printf("Enter name or ID to search: ");
-                    fgets(searchQuery, sizeof(searchQuery), stdin);
-                    searchQuery[strcspn(searchQuery, "\n")] = 0;
-                    searchProduct(products, count, searchQuery);
-                }
-                break;
-            case 5:
-                if (count == 0) {
-                    printf("No products to sort.\n");
-                } else {
-                    printf("Sort by: \n1. Name\n2. Quantity\n3. Price\n");
-                    printf("Choose a criteria: ");
-                    scanf("%d", &sortCriteria);
-                    clearInputBuffer();
-                    sortProducts(products, count, sortCriteria);
-                    displayAllProducts(products, count);
-                }
-                break;
-            case 6:
-                displayAllProducts(products, count);
-                break;
-            case 7:
-                statisticProducts(products, count);
-                break;
-            case 8:
-                printf("Exiting program....\n");
-                free(products);
-                return 0;
-            default:
-                printf("Invalid option! Please try again.\n");
-                break;
+    if (choice == 1) {
+        char keyword[50];
+        printf("Nhap ten can tim: ");
+        scanf("%s", keyword);
+        for (i = 0; i < count; i++) {
+            if (strcmp(names[i], keyword) == 0) {
+                printf("Tim thay: %s | Gia: %.2f | So luong: %d\n", names[i], prices[i], quantities[i]);
+                return;
+            }
         }
+        printf("Khong tim thay san pham!\n");
+    } else if (choice == 2) {
+        double price;
+        printf("Nhap gia can tim: ");
+        scanf("%lf", &price);
+        for (i = 0; i < count; i++) {
+            if (prices[i] == price) {
+                printf("Tim thay: %s | Gia: %.2f | So luong: %d\n", names[i], prices[i], quantities[i]);
+                return;
+            }
+        }
+        printf("Khong tim thay san pham!\n");
+    } else if (choice == 3) {
+        int qty;
+        printf("Nhap so luong can tim: ");
+        scanf("%d", &qty);
+        for (int i = 0; i < count; i++) {
+            if (quantities[i] == qty) {
+                printf("Tim thay: %s | Gia: %.2f | So luong: %d\n", names[i], prices[i], quantities[i]);
+                return;
+            }
+        }
+        printf("Khong tim thay san pham!\n");
+    } else {
+        printf("Lua chon khong hop le!\n");
     }
 }
+
+
+void sortProduct() {
+	int i, j;
+    if (count == 0) {
+        printf("Danh sach trong!\n");
+        return;
+    }
+    int choice;
+    printf("Sap xep theo:\n1. Ten\n2. Gia\n3. So luong\nNhap lua chon: ");
+    scanf("%d", &choice);
+
+    for (i = 0; i < count - 1; i++) {
+        for (j = i + 1; j < count; j++) {
+            int swap = 0;
+            if (choice == 1 && strcmp(names[i], names[j]) > 0) swap = 1;
+            else if (choice == 2 && prices[i] > prices[j]) swap = 1;
+            else if (choice == 3 && quantities[i] > quantities[j]) swap = 1;
+
+            if (swap) {
+                char tempName[50];
+                double tempPrice;
+                int tempQty;
+                strcpy(tempName, names[i]);
+                strcpy(names[i], names[j]);
+                strcpy(names[j], tempName);
+                tempPrice = prices[i]; prices[i] = prices[j]; prices[j] = tempPrice;
+                tempQty = quantities[i]; quantities[i] = quantities[j]; quantities[j] = tempQty;
+            }
+        }
+    }
+    printf("Da sap xep danh sach!\n");
+}
+
+
+void saveToFile() {
+	int i;
+    FILE *f = fopen("products.txt", "w");
+    if (f == NULL) {
+        printf("Khong the mo file de ghi!\n");
+        return;
+    }
+    for (i = 0; i < count; i++) {
+        fprintf(f, "%s %.2f %d\n", names[i], prices[i], quantities[i]);
+    }
+    fclose(f);
+    printf("Da luu danh sach vao file products.txt!\n");
+}
+
+
+void loadFromFile() {
+    FILE *f = fopen("products.txt", "r");
+    if (f == NULL) {
+        printf("Khong tim thay file products.txt!\n");
+        return;
+    }
+    count = 0;
+    while (fscanf(f, "%s %lf %d", names[count], &prices[count], &quantities[count]) == 3) {
+        count++;
+    }
+    fclose(f);
+    printf("Da tai danh sach tu file products.txt!\n");
+}
+
+
+int main() {
+    int choice;
+    do {
+        printf("\n=== QUAN LY SAN PHAM ===\n");
+        printf("1. Them san pham\n");
+        printf("2. Hien thi danh sach\n");
+        printf("3. Chinh sua san pham\n");
+        printf("4. Xoa san pham\n");
+        printf("5. Tim kiem san pham\n");
+        printf("6. Sap xep san pham\n");
+        printf("7. Luu vao file\n");
+        printf("8. Doc tu file\n");
+        printf("0. Thoat\n");
+        printf("Nhap lua chon: ");
+        scanf("%d", &choice);
+
+        switch (choice) {
+            case 1: addProduct(); break;
+            case 2: displayProducts(); break;
+            case 3: editProduct(); break;
+            case 4: deleteProduct(); break;
+            case 5: searchProduct(); break;
+            case 6: sortProduct(); break;
+            case 7: saveToFile(); break;
+            case 8: loadFromFile(); break;
+            case 0:
+                printf("Thoat chuong trinh. Tam biet!\n");
+                break;
+            default:
+                printf("Lua chon khong hop le!\n");
+        }
+    } while (choice != 0);
+
+    return 0;
+}
+
